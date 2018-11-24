@@ -1,7 +1,8 @@
 #!/bin/bash
-MODEL=${MODEL:- "models/DBLP"}
+set -x
+MODEL=${MODEL:- "models/hotel"}
 # RAW_TRAIN is the input of AutoPhrase, where each line is a single document.
-RAW_TRAIN=${RAW_TRAIN:- data/DBLP.txt}
+RAW_TRAIN=${RAW_TRAIN:- data/hotel.txt}
 # When FIRST_RUN is set to 1, AutoPhrase will run all preprocessing. 
 # Otherwise, AutoPhrase directly starts from the current preprocessed data in the tmp/ folder.
 FIRST_RUN=${FIRST_RUN:- 1}
@@ -91,7 +92,8 @@ echo ${green}===AutoPhrasing===${reset}
 
 if [ $ENABLE_POS_TAGGING -eq 1 ]; then
     time ./bin/segphrase_train \
-        --pos_tag \
+         --pos_tag \
+	 --verbose \
         --thread $THREAD \
         --pos_prune data/BAD_POS_TAGS.txt \
         --label_method $LABEL_METHOD \
