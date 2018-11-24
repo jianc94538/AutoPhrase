@@ -96,9 +96,9 @@ inline string tolower(const string &a) {
 
 const int MAX_LENGTH = 100000000;
 
-char line[MAX_LENGTH + 1];
+// char line[MAX_LENGTH + 1];
 
-inline bool getLine(FILE *in) {
+inline bool getLine(FILE *in, char *line) {
   bool hasNext = fgets(line, MAX_LENGTH, in);
   int length = strlen(line);
   while (length > 0 && (line[length - 1] == '\n' || line[length - 1] == '\r')) {

@@ -130,8 +130,9 @@ int main(int argc, char *argv[]) {
 
   FILE *out = tryOpen("tmp/tokenized_segmented_sentences.txt", "w");
 
-  while (getLine(in)) {
-    stringstream sin(line);
+  std::unique_ptr<char> line(new char[MAX_LENGTH+1]);
+  while (getLine(in, line.get())) {
+    stringstream sin(line.get());
     vector<TOTAL_TOKENS_TYPE> tokens;
     vector<POS_ID_TYPE> tags;
 

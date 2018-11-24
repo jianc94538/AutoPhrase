@@ -7,18 +7,6 @@
 #include "../frequent_pattern_mining/frequent_pattern_mining.h"
 #include "../utils/utils.h"
 
-/*
-using Documents::totalWordTokens;
-using Documents::wordTokens;
-using Documents::stopwords;
-
-using FrequentPatternMining::Pattern;
-using FrequentPatternMining::patterns;
-using FrequentPatternMining::pattern2id;
-using FrequentPatternMining::id2ends;
-using FrequentPatternMining::unigrams;
-*/
-
 class Label {
 public:
   Label(Documents *corpus, FrequentPatternMining *pattern_mining)
@@ -31,8 +19,9 @@ public:
 
     vector<FrequentPatternMining::Pattern> ret;
     FILE *in = tryOpen(filename, "r");
-    while (getLine(in)) {
-      stringstream sin(line);
+    std::unique_ptr<char> line(new char[MAX_LENGTH+1]);
+    while (getLine(in, line.get())) {
+      stringstream sin(line.get());
       bool valid = true;
       FrequentPatternMining::Pattern p;
       sin >> p.label;
@@ -50,9 +39,10 @@ public:
   inline vector<FrequentPatternMining::Pattern>
   loadTruthPatterns(string filename) {
     vector<FrequentPatternMining::Pattern> ret;
+    std::unique_ptr<char> line(new char[MAX_LENGTH+1]);
     FILE *in = tryOpen(filename, "r");
-    while (getLine(in)) {
-      stringstream sin(line);
+    while (getLine(in, line.get())) {
+      stringstream sin(line.get());
       bool valid = true;
       FrequentPatternMining::Pattern p;
       for (string s; sin >> s;) {
@@ -83,8 +73,9 @@ public:
 
     FILE *in = tryOpen(filename, "r");
     vector<ULL> positivesUnigrams, positiveMultiwords;
-    while (getLine(in)) {
-      stringstream sin(line);
+    std::unique_ptr<char> line(new char[MAX_LENGTH+1]);
+    while (getLine(in, line.get())) {
+      stringstream sin(line.get());
       bool valid = true;
       FrequentPatternMining::Pattern p;
       for (string s; sin >> s;) {

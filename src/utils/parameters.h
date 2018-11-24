@@ -56,7 +56,7 @@ const string TEXT_TO_SEG_POS_TAGS_FILE =
     "tmp/pos_tags_tokenized_text_to_seg.txt";
 #endif
 
-bool INTERMEDIATE = false;
+extern bool INTERMEDIATE;
 
 class Configure {
 public:
