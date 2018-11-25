@@ -54,7 +54,7 @@ public:
 
   set<TOKEN_ID_TYPE> stopwords;
 
-  set<string> separatePunc = {",", ".", "\"", ";", "!", ":", "(", ")", "\""};
+  const set<string> separatePunc = {",", ".", "\"", ";", "!", ":", "(", ")", "\""};
   // ===
   inline bool hasDashAfter(TOTAL_TOKENS_TYPE i) {
     return 0 <= i && i < totalWordTokens && wordTokenInfo[i].get(DASH_AFTER);

@@ -68,12 +68,6 @@ int main(int argc, char *argv[]) {
 
   TOTAL_TOKENS_TYPE recognized = featurize->recognize(truth);
 
-  /*
-  if (config.ENABLE_POS_TAGGING) {
-    Segmentation::initializePosTags(corpus.posTag2id.size());
-  }
-  */
-
   std::unique_ptr<Segmentation> segmentation(new Segmentation(
       config.ENABLE_POS_TAGGING, pattern_mining.get(), corpus.get()));
 
@@ -88,15 +82,6 @@ int main(int argc, char *argv[]) {
     predictQualityUnigram(pattern_mining->patterns, featuresUnigram,
                           featureNamesUnigram);
 
-    /*
-    if (iteration == 0) {
-        Dump::dumpResults("tmp/distant_training_only");
-        break;
-    }
-    */
-    /*
-    constructTrie(); // update the current frequent enough patterns
-    */
     // check the quality
     if (INTERMEDIATE) {
       char filename[256];
@@ -108,6 +93,7 @@ int main(int argc, char *argv[]) {
     if (INTERMEDIATE) {
       cerr << "[POS Tags Mode]" << endl;
     }
+    // update the current frequent enough patterns
     segmentation->constructTrie();
     double last = 1e100;
     for (int inner = 0; inner < 10; ++inner) {
@@ -132,20 +118,6 @@ int main(int argc, char *argv[]) {
       cerr << "Rectifying features..." << endl;
       label->removeWrongLabels();
 
-      /*
-      // use number of sentences + rectified frequency to approximate the new
-      idf double docs = Documents::sentences.size() + EPS; double diff = 0; int
-      cnt = 0; for (int i = 0; i < patterns.size(); ++ i) { if
-      (patterns[i].size() == 1) { const TOKEN_ID_TYPE& token =
-      patterns[i].tokens[0]; TOTAL_TOKENS_TYPE freq = patterns[i].currentFreq;
-              double newIdf = log(docs / (freq + EPS) + EPS);
-              diff += abs(newIdf - Documents::idf[token]);
-              ++ cnt;
-              Documents::idf[token] = newIdf;
-          }
-      }
-      */
-
       features = featurize->extract(featureNames);
       featuresUnigram = featurize->extractUnigram(featureNamesUnigram);
     }
@@ -159,7 +131,10 @@ int main(int argc, char *argv[]) {
   }
 
   cerr << "Dumping results..." << endl;
-  dumper.dumpResults("tmp/final_quality", config.MIN_SUP);
+  // dumper.dumpResults("tmp/final_quality", config.MIN_SUP);
+  dumper.dumpSalientResults(config.output_salient_file, config.MIN_SUP);
+  dumper.dumpMultiWordResults(config.output_multiword_file, config.MIN_SUP);
+  dumper.dumpUnigramResults(config.output_unigram_file, config.MIN_SUP);
   dumper.dumpSegmentationModel("tmp/segmentation.model", segmentation.get(), config.MIN_SUP);
 
   cerr << "Done." << endl;

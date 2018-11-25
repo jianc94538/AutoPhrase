@@ -99,7 +99,10 @@ if [ $ENABLE_POS_TAGGING -eq 1 ]; then
         --label_method $LABEL_METHOD \
 		--label $LABEL_FILE \
         --max_positives $MAX_POSITIVES \
-        --min_sup $MIN_SUP
+        --min_sup $MIN_SUP \
+	--output_salient tmp/output_salient.txt \
+	--output_multiword tmp/output_multi-words.txt \
+	--output_unigram tmp/output_unigrams.txt
 else
     time ./bin/segphrase_train \
         --thread $THREAD \
@@ -118,9 +121,9 @@ cp tmp/language.txt ${MODEL}/language.txt
 ### END AutoPhrasing ###
 
 echo ${green}===Generating Output===${reset}
-java $TOKENIZER -m translate -i tmp/final_quality_multi-words.txt -o ${MODEL}/AutoPhrase_multi-words.txt -t $TOKEN_MAPPING -c N -thread $THREAD
-java $TOKENIZER -m translate -i tmp/final_quality_unigrams.txt -o ${MODEL}/AutoPhrase_single-word.txt -t $TOKEN_MAPPING -c N -thread $THREAD
-java $TOKENIZER -m translate -i tmp/final_quality_salient.txt -o ${MODEL}/AutoPhrase.txt -t $TOKEN_MAPPING -c N -thread $THREAD
+java $TOKENIZER -m translate -i tmp/output_multi-words.txt -o ${MODEL}/AutoPhrase_multi-words.txt -t $TOKEN_MAPPING -c N -thread $THREAD
+java $TOKENIZER -m translate -i tmp/output_unigrams.txt -o ${MODEL}/AutoPhrase_single-word.txt -t $TOKEN_MAPPING -c N -thread $THREAD
+java $TOKENIZER -m translate -i tmp/output_salient.txt -o ${MODEL}/AutoPhrase.txt -t $TOKEN_MAPPING -c N -thread $THREAD
 
 # java $TOKENIZER -m translate -i tmp/distant_training_only_salient.txt -o results/DistantTraning.txt -t $TOKEN_MAPPING -c N -thread $THREAD
 

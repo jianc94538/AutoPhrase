@@ -3,7 +3,8 @@ CFLAGS = -std=c++11 -Wall -O3 -msse2  -fopenmp  -I..
 
 BIN = 	./bin/segphrase_train ./bin/segphrase_segment
 OBJ =  	./src/frequent_pattern_mining/frequent_pattern_mining.o ./src/classification/feature_extraction.o \
-	./src/model_training/segmentation.o ./src/data/documents.o
+	./src/model_training/segmentation.o ./src/data/documents.o ./src/classification/predict_quality.o \
+	./src/data/dump.o
 .PHONY: clean all
 
 all: ./bin $(BIN)
@@ -21,6 +22,10 @@ all: ./bin $(BIN)
 ./src/classification/feature_extraction.o: ./src/classification/feature_extraction.cc
 
 ./src/data/documents.o: ./src/data/documents.cc
+
+./src/classification/predict_quality.o: ./src/classification/predict_quality.cc
+
+./src/data/dump.o: ./src/data/dump.cc
 
 ./bin:
 	mkdir -p bin

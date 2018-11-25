@@ -43,6 +43,12 @@ void parseCommandFlags(int argc, char *argv[], Configure *config) {
       fromString(argv[++i], config->SEGMENT_MULTI_WORD_QUALITY_THRESHOLD);
     } else if (!strcmp(argv[i], "--highlight-single")) {
       fromString(argv[++i], config->SEGMENT_SINGLE_WORD_QUALITY_THRESHOLD);
+    } else if (!strcmp(argv[i], "--output_salient")){
+      config->output_salient_file = argv[++i];
+    } else if (!strcmp(argv[i], "--output_multiword")){
+      config->output_multiword_file = argv[++i];
+    } else if (!strcmp(argv[i], "--output_unigram")){
+      config->output_unigram_file = argv[++i];
     } else {
       fprintf(stderr, "[Warning] Unknown Parameter: %s\n", argv[i]);
     }
