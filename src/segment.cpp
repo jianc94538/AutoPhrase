@@ -107,18 +107,14 @@ int main(int argc, char *argv[]) {
        byQuality);
 
   Segmentation *segmenter;
-  if (config.ENABLE_POS_TAGGING) {
-    segmenter = new Segmentation(config.ENABLE_POS_TAGGING,
-                                 pattern_mining.get(), corpus.get());
-    segmenter->getDisconnect();
-    segmenter->logPosTags();
-    segmenter->constructTrie(
-        false); // update the current frequent enough patterns
-  } else {
-    segmenter = new Segmentation(Segmentation::penalty);
-  }
-
+  segmenter = new Segmentation(config.ENABLE_POS_TAGGING, pattern_mining.get(),
+                               corpus.get());
   dumper.loadSegmentationModel(config.SEGMENTATION_MODEL, segmenter);
+
+  segmenter->getDisconnect();
+  segmenter->logPosTags();
+  // update the current frequent enough patterns
+  segmenter->constructTrie(false);
 
   char currentTag[100];
 
@@ -130,7 +126,7 @@ int main(int argc, char *argv[]) {
 
   FILE *out = tryOpen("tmp/tokenized_segmented_sentences.txt", "w");
 
-  std::unique_ptr<char> line(new char[MAX_LENGTH+1]);
+  std::unique_ptr<char> line(new char[MAX_LENGTH + 1]);
   while (getLine(in, line.get())) {
     stringstream sin(line.get());
     vector<TOTAL_TOKENS_TYPE> tokens;

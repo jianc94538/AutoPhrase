@@ -1,5 +1,6 @@
-MODEL=${MODEL:- "models/DBLP"}
-TEXT_TO_SEG=${TEXT_TO_SEG:-data/EN/DBLP.5K.txt}
+set -x
+MODEL=${MODEL:- "models/hotel"}
+TEXT_TO_SEG=${TEXT_TO_SEG:-data/hotel.txt}
 HIGHLIGHT_MULTI=${HIGHLIGHT_MULTI:- 0.5}
 HIGHLIGHT_SINGLE=${HIGHLIGHT_SINGLE:- 0.8}
 
