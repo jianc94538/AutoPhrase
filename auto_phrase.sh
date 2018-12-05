@@ -1,8 +1,8 @@
 #!/bin/bash
 set -x
-MODEL=${MODEL:- "models/hotel"}
+MODEL=${MODEL:- "models/$1"}
 # RAW_TRAIN is the input of AutoPhrase, where each line is a single document.
-RAW_TRAIN=${RAW_TRAIN:- data/hotel.txt}
+RAW_TRAIN=${RAW_TRAIN:- data/$1.txt}
 # When FIRST_RUN is set to 1, AutoPhrase will run all preprocessing. 
 # Otherwise, AutoPhrase directly starts from the current preprocessed data in the tmp/ folder.
 FIRST_RUN=${FIRST_RUN:- 1}
@@ -13,6 +13,11 @@ ENABLE_POS_TAGGING=${ENABLE_POS_TAGGING:- 1}
 MIN_SUP=${MIN_SUP:- 10}
 # You can also specify how many threads can be used for AutoPhrase
 THREAD=${THREAD:- 10}
+
+HIGHLIGHT_MULTI=${HIGHLIGHT_MULTI:- 0.5}
+HIGHLIGHT_SINGLE=${HIGHLIGHT_SINGLE:- 0.8}
+SEGMENTATION_MODEL=${MODEL}/segmentation.model
+TOKEN_MAPPING=${MODEL}/token_mapping.txt
 
 ### Begin: Suggested Parameters ###
 MAX_POSITIVES=-1
@@ -92,17 +97,13 @@ echo ${green}===AutoPhrasing===${reset}
 
 if [ $ENABLE_POS_TAGGING -eq 1 ]; then
     time ./bin/segphrase_train \
-         --pos_tag \
-	 --verbose \
+        --pos_tag \
         --thread $THREAD \
         --pos_prune data/BAD_POS_TAGS.txt \
         --label_method $LABEL_METHOD \
 		--label $LABEL_FILE \
         --max_positives $MAX_POSITIVES \
-        --min_sup $MIN_SUP \
-	--output_salient tmp/output_salient.txt \
-	--output_multiword tmp/output_multi-words.txt \
-	--output_unigram tmp/output_unigrams.txt
+        --min_sup $MIN_SUP
 else
     time ./bin/segphrase_train \
         --thread $THREAD \
@@ -121,9 +122,20 @@ cp tmp/language.txt ${MODEL}/language.txt
 ### END AutoPhrasing ###
 
 echo ${green}===Generating Output===${reset}
-java $TOKENIZER -m translate -i tmp/output_multi-words.txt -o ${MODEL}/AutoPhrase_multi-words.txt -t $TOKEN_MAPPING -c N -thread $THREAD
-java $TOKENIZER -m translate -i tmp/output_unigrams.txt -o ${MODEL}/AutoPhrase_single-word.txt -t $TOKEN_MAPPING -c N -thread $THREAD
-java $TOKENIZER -m translate -i tmp/output_salient.txt -o ${MODEL}/AutoPhrase.txt -t $TOKEN_MAPPING -c N -thread $THREAD
+java $TOKENIZER -m translate -i tmp/final_quality_multi-words.txt -o ${MODEL}/AutoPhrase_multi-words.txt -t $TOKEN_MAPPING -c N -thread $THREAD
+java $TOKENIZER -m translate -i tmp/final_quality_unigrams.txt -o ${MODEL}/AutoPhrase_single-word.txt -t $TOKEN_MAPPING -c N -thread $THREAD
+java $TOKENIZER -m translate -i tmp/final_quality_salient.txt -o ${MODEL}/AutoPhrase.txt -t $TOKEN_MAPPING -c N -thread $THREAD
+
+time ./bin/segphrase_segment \
+     --pos_tag \
+     --thread $THREAD \
+     --model $SEGMENTATION_MODEL \
+     --highlight-multi $HIGHLIGHT_MULTI \
+     --highlight-single $HIGHLIGHT_SINGLE
+
+
+echo ${green}===Generating Output===${reset}
+java $TOKENIZER -m segmentation -i $RAW_TRAIN -segmented tmp/tokenized_segmented_sentences.txt -o ${MODEL}/segmentation.txt -tokenized_raw tmp/raw_tokenized_train.txt -tokenized_id tmp/tokenized_train.txt -c N
 
 # java $TOKENIZER -m translate -i tmp/distant_training_only_salient.txt -o results/DistantTraning.txt -t $TOKEN_MAPPING -c N -thread $THREAD
 

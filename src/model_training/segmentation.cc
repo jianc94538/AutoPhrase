@@ -30,26 +30,23 @@ void Segmentation::constructTrie(bool duringTraingStage) {
     cerr << "# of trie nodes = " << trie.size() << endl;
   }
 
-  if (true) {
-    for (PATTERN_ID_TYPE i = 0; i < pattern_mining_->truthPatterns.size();
-         ++i) {
-      const vector<TOTAL_TOKENS_TYPE> &tokens =
-          pattern_mining_->truthPatterns[i].tokens;
-      size_t u = 0;
-      for (const TOTAL_TOKENS_TYPE &token : tokens) {
-        if (!trie[u].children.count(token)) {
-          trie[u].children[token] = trie.size();
-          trie.push_back(TrieNode());
-        }
-        u = trie[u].children[token];
+  for (PATTERN_ID_TYPE i = 0; i < pattern_mining_->truthPatterns.size(); ++i) {
+    const vector<TOTAL_TOKENS_TYPE> &tokens =
+        pattern_mining_->truthPatterns[i].tokens;
+    size_t u = 0;
+    for (const TOTAL_TOKENS_TYPE &token : tokens) {
+      if (!trie[u].children.count(token)) {
+        trie[u].children[token] = trie.size();
+        trie.push_back(TrieNode());
       }
-      if (trie[u].id == -1 || !duringTraingStage) {
-        trie[u].id = pattern_mining_->patterns.size(); // TRUTH;
-      }
+      u = trie[u].children[token];
     }
-    if (INTERMEDIATE) {
-      cerr << "# of trie nodes = " << trie.size() << endl;
+    if (trie[u].id == -1 || !duringTraingStage) {
+      trie[u].id = pattern_mining_->patterns.size(); // TRUTH;
     }
+  }
+  if (INTERMEDIATE) {
+    cerr << "# of trie nodes = " << trie.size() << endl;
   }
 }
 
@@ -208,7 +205,6 @@ double Segmentation::viterbi(const vector<TOKEN_ID_TYPE> &tokens,
   }
   return f[tokens.size()];
 }
-
 
 double Segmentation::rectifyFrequencyPOS(
     vector<pair<TOTAL_TOKENS_TYPE, TOTAL_TOKENS_TYPE>> &sentences,
@@ -402,4 +398,3 @@ double Segmentation::viterbi_for_testing(const vector<TOKEN_ID_TYPE> &tokens,
   }
   return f[tokens.size()];
 }
-

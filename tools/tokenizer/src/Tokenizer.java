@@ -743,8 +743,12 @@ public class Tokenizer {
               String tokenID = nextTokenID(tokenizedIDReader);
 
               if (punctuation_mapping.containsKey(token)) {
-                // skip it
-                continue;
+                if (!tokenID.equals(parts[i])) {
+                  continue;
+                }
+                System.out.printf("token %s, tokenID %s, buffer %s\n", token,
+                                  tokenID, buffer);
+                break;
               }
 
               // System.err.println("tokenID = " + tokenID);

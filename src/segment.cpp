@@ -38,7 +38,7 @@ void process(const vector<TOTAL_TOKENS_TYPE> &tokens,
   int i = (int)tokens.size();
   assert(f[i] > -1e80);
   vector<string> ret;
-  auto trie = segmenter.trie;
+  const auto& trie = segmenter.trie;
   while (i > 0) {
     int j = pre[i];
     size_t u = 0;
@@ -48,7 +48,7 @@ void process(const vector<TOTAL_TOKENS_TYPE> &tokens,
         quality = false;
         break;
       }
-      u = trie[u].children[tokens[k]];
+      u = trie[u].children.at(tokens[k]);
     }
     quality &=
         trie[u].id == patterns.size() &&

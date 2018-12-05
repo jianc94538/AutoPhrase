@@ -1,5 +1,5 @@
 CXX = g++
-CFLAGS = -std=c++11 -Wall -g -msse2  -fopenmp  -I..
+CFLAGS = -std=c++11 -Wall -O3 -msse2  -fopenmp  -I..
 
 BIN = 	./bin/segphrase_train ./bin/segphrase_segment
 OBJ =  	./src/frequent_pattern_mining/frequent_pattern_mining.o ./src/classification/feature_extraction.o \
